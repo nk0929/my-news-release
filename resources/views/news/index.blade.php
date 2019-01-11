@@ -48,7 +48,7 @@
               <div class="row reverse">
                 <figure class="image col-md-6 text-right mt-4">
                   {{--　松田変更ここから --}}
-                  {{--　
+                  {{--
                   @if ($post->image_path)
                     <img src="{{ asset('storage/image/' . $post->image_path) }}">
                     @else

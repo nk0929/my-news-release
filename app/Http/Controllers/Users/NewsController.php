@@ -8,7 +8,9 @@ use App\News;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Utl; // 松田追加
+use Utl;
+
+// 松田追加
 
 class NewsController extends Controller
 {
@@ -32,7 +34,7 @@ class NewsController extends Controller
         if (isset($form['image'])) {
             // 松田変更ここから
             //$path = $request->file('image')->store('public/image');
-            $path =  parent::storeImage($request->file('image'));
+            $path = parent::storeImage($request->file('image'));
             // 松田変更ここまで
             $news->image_path = basename($path);
         } else {
@@ -55,11 +57,11 @@ class NewsController extends Controller
         if ($cond_title != '') {
             // 検索されたら検索結果を取得する
             $posts = News::where('title', 'LIKE', "%{$cond_title}%")->get();
-        // 松田変更ここから
-        //} else if (Auth::user()->id === 9) {
+            // 松田変更ここから
+            //} else if (Auth::user()->id === 9) {
         } else if (Utl::isAdmin()) {
-        // 松田変更ここまで
-            $posts = News::where('user_id', $request->id)->get();
+            // 松田変更ここまで
+            $posts = News::where('user_id', Auth::id())->get();
             return view('users.news.index', ['posts' => $posts, 'cond_title' => $cond_title]);
         } else {
             $posts = News::all()->sortByDesc('created_at');
@@ -73,7 +75,7 @@ class NewsController extends Controller
         // 松田変更ここから
         // if (Auth::user()->id === 9) {
         if (Utl::isAdmin()) {
-        // 松田変更ここまで
+            // 松田変更ここまで
             return view('users.news.edit', ['news_form' => $news]);
         } else if (!$news || Auth::user()->id != $news->user_id) {
             return redirect('users/news/');
@@ -90,14 +92,14 @@ class NewsController extends Controller
         if ($request->remove == 'true') {
             // 松田追加ここから
             if (!Utl::isNullOrEmpty($news->image_path)) {
-              parent::deleteImage($news->image_path);
+                parent::deleteImage($news->image_path);
             }
             // 松田追加ここまで
             $news_form['image_path'] = null;
         } elseif ($request->file('image')) {
             // 松田変更ここから
             //$path = $request->file('image')->store('public/image');
-            $path =  parent::swapImage($request->file('image'), $news->image_path);
+            $path = parent::swapImage($request->file('image'), $news->image_path);
             // 松田変更ここまで
             $news_form['image_path'] = basename($path);
         } else {
@@ -125,7 +127,7 @@ class NewsController extends Controller
         // 松田追加ここから
         // 画像が登録されていれば削除する
         if (!Utl::isNullOrEmpty($news->image_path)) {
-          parent::deleteImage($news->image_path);
+            parent::deleteImage($news->image_path);
         }
         // 松田追加ここまで
         // 削除する
